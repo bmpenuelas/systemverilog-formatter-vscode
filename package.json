@@ -1,6 +1,6 @@
 {
   "name": "systemverilog-formatter-vscode",
-  "displayName": "SystemVerilog code formatter & linter",
+  "displayName": "SystemVerilog code formatter and linter",
   "description": "SystemVerilog code formatting and linting in VSCode through Verible",
   "version": "0.0.1",
   "engines": {
@@ -10,10 +10,23 @@
     "Other"
   ],
   "activationEvents": [
+    "onLanguage:systemverilog",
     "onCommand:systemverilog-formatter-vscode.helloWorld"
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "languages": [
+      {
+        "id": "systemverilog",
+        "aliases": [
+          "System Verilog"
+        ],
+        "extensions": [
+          ".sv",
+          ".svh"
+        ]
+      }
+    ],
     "commands": [
       {
         "command": "systemverilog-formatter-vscode.helloWorld",
