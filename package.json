@@ -2,7 +2,7 @@
   "name": "systemverilog-formatter-vscode",
   "displayName": "SystemVerilog code formatter",
   "description": "SystemVerilog code formatting in VSCode through Verible",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "publisher": "bmpenuelas",
   "license": "MIT",
   "repository": {
