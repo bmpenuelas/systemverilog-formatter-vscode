@@ -6,8 +6,8 @@ import subprocess
 import json
 
 
-RELEASE_DIR = 'src/verible_release'
-RELEASE_INFO_FILE = 'src/verible_release_info.json'
+RELEASE_DIR = 'verible_release'
+RELEASE_INFO_FILE = 'verible_release_info.json'
 GET_RELEASES_CMD = 'curl -s https://api.github.com/repos/google/verible/releases/latest | jq -r ".assets[].name"'
 GET_TAG_CMD = 'curl -s https://api.github.com/repos/google/verible/releases/latest | grep -oP \'"tag_name": "\K(.*)(?=")\''
 

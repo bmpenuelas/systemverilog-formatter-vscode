@@ -3,5 +3,6 @@ npm-debug.log
 Thumbs.db
 node_modules/
 out/
-src/verible_release
-src/verible_release_info.json
+*.vsix
+verible_release
+verible_release_info.json

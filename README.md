@@ -1,10 +1,12 @@
-# systemverilog-formatter-vscode README
+# SystemVerilog Formatter for VSCode
 
-### SystemVerilog code formatting in VSCode through [google/Verible](https://github.com/google/verible)
+### Beautify SystemVerilog code in VSCode through [google/Verible](https://github.com/google/verible)
+
+**WARNING!** This extension will **only** work out of the box for the supported pre-built **Linux** systems detailed below. For other OSs you need to build Verible yourself and have it in your PATH.
 
 ### OS Support
 
-As of now, Verible binaries are **only available for Linux**:
+As of now, Verible binaries are **only released for Linux**:
 
 - CentOS-8.1.1911-Core-x86_64
 - Ubuntu-14.04-trusty-x86_64

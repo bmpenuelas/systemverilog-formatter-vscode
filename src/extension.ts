@@ -4,12 +4,12 @@ import { join, dirname } from 'path'
 import * as child from 'child_process'
 
 // Constants
-const extensionID = 'bmpenuelas.systemverilog-formatter-vscode'
+const extensionName = 'systemverilog-formatter-vscode'
+const extensionID = 'bmpenuelas.' + extensionName
 const extensionPath = vscode.extensions.getExtension(extensionID)
   ?.extensionPath as string
 const verible_release_info_path = join(
   extensionPath,
-  '/src/',
   'verible_release_info.json',
 )
 const extensionCfg = vscode.workspace.getConfiguration('systemverilogFormatter')
@@ -27,7 +27,6 @@ const usedVeribleBuild = (() => {
 const veribleBinPath = usedVeribleBuild
   ? join(
       extensionPath,
-      'src',
       'verible_release',
       usedVeribleBuild,
       'verible-' + veribleReleaseInfo['tag'],
@@ -85,7 +84,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Command: formatDocument
   let formatDocument = vscode.commands.registerCommand(
-    'systemverilog-formatter-vscode.formatDocument',
+    extensionName + '.formatDocument',
     () => {
       var editor = vscode.window.activeTextEditor
       if (editor) {
@@ -106,7 +105,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Command: formatSelection
   let formatSelection = vscode.commands.registerCommand(
-    'systemverilog-formatter-vscode.formatSelection',
+    extensionName + '.formatSelection',
     () => {
       var editor = vscode.window.activeTextEditor
       if (editor) {
