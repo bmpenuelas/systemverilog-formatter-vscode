@@ -42,7 +42,7 @@ This extension integrates with VSCode formatting, so you can use the built-in `F
 
 You can use the `SystemVerilog Formatter - Format this file` command from the command palette to apply formatting to the whole current document; or assign a Keyboard Shortcut to `systemverilog-formatter-vscode.formatDocument`
 
-#### Format document
+#### Format selection
 
 You can select a portion of the file and use the `SystemVerilog Formatter - Format selection` command from the command palette to apply formatting to just that section of the document; or assign a Keyboard Shortcut to `systemverilog-formatter-vscode.formatSelection`
 
