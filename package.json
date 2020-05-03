@@ -1,8 +1,14 @@
 {
   "name": "systemverilog-formatter-vscode",
-  "displayName": "SystemVerilog code formatter and linter",
-  "description": "SystemVerilog code formatting and linting in VSCode through Verible",
+  "displayName": "SystemVerilog code formatter",
+  "description": "SystemVerilog code formatting in VSCode through Verible",
   "version": "0.0.1",
+  "publisher": "bmpenuelas",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bmpenuelas/systemverilog-formatter-vscode.git"
+  },
   "engines": {
     "vscode": "^1.44.0"
   },
@@ -11,7 +17,7 @@
   ],
   "activationEvents": [
     "onLanguage:systemverilog",
-    "onCommand:systemverilog-formatter-vscode.helloWorld"
+    "onCommand:systemverilog-formatter-vscode.format"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -19,7 +25,8 @@
       {
         "id": "systemverilog",
         "aliases": [
-          "System Verilog"
+          "System Verilog",
+          "systemverilog"
         ],
         "extensions": [
           ".sv",
@@ -29,10 +36,32 @@
     ],
     "commands": [
       {
-        "command": "systemverilog-formatter-vscode.helloWorld",
-        "title": "Hello World"
+        "command": "systemverilog-formatter-vscode.formatDocument",
+        "title": "SystemVerilog Formatter - Format this file"
+      },
+      {
+        "command": "systemverilog-formatter-vscode.formatSelection",
+        "title": "SystemVerilog Formatter - Format selection"
       }
-    ]
+    ],
+    "configuration": {
+      "type": "str",
+      "title": "SystemVerilog code formatter",
+      "properties": {
+        "systemverilogFormatter.veribleBuild": {
+          "type": "string",
+          "description": "Verible build. Select a prebuilt one or \"none\" if you have your own build and the binaries are in your PATH",
+          "default": "Ubuntu-19",
+          "enum": [
+            "CentOS-8",
+            "Ubuntu-14",
+            "Ubuntu-16",
+            "Ubuntu-18",
+            "Ubuntu-19"
+          ]
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "python3 update_dependencies.py && npm run compile",
