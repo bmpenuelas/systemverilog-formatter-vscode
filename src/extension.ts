@@ -24,14 +24,16 @@ const usedVeribleBuild = (() => {
     if (buildStr.startsWith(extensionCfg.veribleBuild)) return buildStr
   }
 })()
-const veribleBinPath = join(
-  extensionPath,
-  'src',
-  'verible_release',
-  usedVeribleBuild,
-  'verible-' + veribleReleaseInfo['tag'],
-  'bin',
-)
+const veribleBinPath = usedVeribleBuild
+  ? join(
+      extensionPath,
+      'src',
+      'verible_release',
+      usedVeribleBuild,
+      'verible-' + veribleReleaseInfo['tag'],
+      'bin',
+    )
+  : ''
 
 // Get range of document
 const textRange = (document: vscode.TextDocument) =>

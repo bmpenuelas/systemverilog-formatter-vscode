@@ -2,7 +2,7 @@
 
 ### SystemVerilog code formatting in VSCode through [google/Verible](https://github.com/google/verible)
 
-### OS Support:
+### OS Support
 
 As of now, Verible binaries are **only available for Linux**:
 
@@ -30,7 +30,7 @@ You can use this extension with **_Windows_, _Mac_... or any other OS** but in t
 }
 ```
 
-### Commands:
+### Commands
 
 #### Native formatting:
 
@@ -43,3 +43,7 @@ You can use the `SystemVerilog Formatter - Format this file` command from the co
 #### Format document
 
 You can select a portion of the file and use the `SystemVerilog Formatter - Format selection` command from the command palette to apply formatting to just that section of the document; or assign a Keyboard Shortcut to `systemverilog-formatter-vscode.formatSelection`
+
+### License
+
+This extension is released under **MIT** license. The Verible binaries are fetched from [github.com/google/verible/releases](https://github.com/google/verible/releases), Verible being licensed under **Apache-2.0** license.

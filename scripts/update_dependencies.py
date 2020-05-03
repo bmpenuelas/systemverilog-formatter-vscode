@@ -23,10 +23,8 @@ for index, item in enumerate(releases):
     download_url = 'https://github.com/google/verible/releases/download/' + tag + '/' + item
     item_dir = release_subdirs[index]
     os.mkdir(os.path.join(RELEASE_DIR, item_dir))
-    download_command = 'wget -c ' + download_url + ' -O - | tar -xz -C ' + os.path.join(RELEASE_DIR, item_dir) + ' ' + \
-        'verible-' + tag + '/bin/verilog_format ' + \
-        'verible-' + tag + '/bin/verilog_lint ' + \
-        'verible-' + tag + '/bin/verilog_syntax '
+    download_command = 'wget -c ' + download_url + \
+        ' -O - | tar -xz -C ' + os.path.join(RELEASE_DIR, item_dir) + ' '
     result = subprocess.check_output(
         download_command, shell=True).decode('utf8').strip()
     print(download_command)
