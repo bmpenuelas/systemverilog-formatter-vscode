@@ -64,7 +64,7 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "python3 update_dependencies.py && npm run compile",
+    "vscode:prepublish": "python3 scripts/update_dependencies.py && npm run compile",
     "compile": "tsc -p ./",
     "lint": "eslint src --ext ts",
     "watch": "tsc -watch -p ./",
