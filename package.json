@@ -58,7 +58,8 @@
             "Ubuntu-14",
             "Ubuntu-16",
             "Ubuntu-18",
-            "Ubuntu-19"
+            "Ubuntu-19",
+            "none"
           ]
         }
       }
