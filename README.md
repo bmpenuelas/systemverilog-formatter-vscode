@@ -10,11 +10,14 @@
 
 As of now, Verible binaries are **only released for Linux**. If your Linux distro is not listed below, you can give it a try with the one that is more similar to yours, some users have been able to use it in different distros as well. Otherwise, you can build Verible for your OS and use that selecting build "none".
 
-- CentOS-8.1.1911-Core-x86_64
+- CentOS-6.10-Final-x86_64
+- CentOS-7.8.2003-Core-x86_64
+- CentOS-8.2.2004-Core-x86_64
 - Ubuntu-14.04-trusty-x86_64
 - Ubuntu-16.04-xenial-x86_64
 - Ubuntu-18.04-bionic-x86_64
 - Ubuntu-19.10-eoan-x86_64
+- Ubuntu-20.04-focal-x86_64
 
 Select which binary you want to use by setting `systemverilogFormatter.veribleBuild` in the Settings dropdown or in your `settings.json` as:
 
