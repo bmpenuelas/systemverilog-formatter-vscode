@@ -58,9 +58,11 @@ const format = (
     );
   if (inPlace) params.push("--inplace");
   let runLocation = dirname(filePath);
-  let command = [join(veribleBinPath, "verilog_format"), ...params, "-"].join(
-    " "
-  );
+  let command = [
+    join(veribleBinPath, "verible-verilog-format"),
+    ...params,
+    "-",
+  ].join(" ");
   let output = child.execSync(command, {
     cwd: runLocation,
     input: documentText,
