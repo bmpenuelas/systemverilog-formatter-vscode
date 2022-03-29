@@ -5,4 +5,3 @@ node_modules/
 out/
 *.vsix
 verible_release
-verible_release_info.json

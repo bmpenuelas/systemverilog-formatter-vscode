@@ -3,7 +3,7 @@
   "displayName": "SystemVerilog Formatter",
   "description": "Beautify SystemVerilog code in VSCode through Verible",
   "icon": "img/logo.png",
-  "version": "2.15.0",
+  "version": "2.15.1",
   "publisher": "bmpenuelas",
   "license": "MIT",
   "repository": {
@@ -52,21 +52,31 @@
         "systemverilogFormatter.veribleBuild": {
           "type": "string",
           "description": "Verible build. Select a prebuilt one or \"none\" if you have your own build and the binaries are in your PATH",
-          "default": "Ubuntu-19",
+          "default": "",
           "enum": [
-            "CentOS-8",
-            "Ubuntu-14",
-            "Ubuntu-16",
-            "Ubuntu-18",
-            "Ubuntu-19",
-            "none"
+            "none",
+            "CentOS-7.9.2009-Core-x86_64.tar.gz",
+            "Ubuntu-16.04-xenial-x86_64.tar.gz",
+            "Ubuntu-18.04-bionic-x86_64.tar.gz",
+            "Ubuntu-20.04-focal-x86_64.tar.gz",
+            "Ubuntu-22.04-jammy-x86_64.tar.gz",
+            "win64.zip",
+            "CentOS-6-archived",
+            "CentOS-8-archived",
+            "Ubuntu-14-archived",
+            "Ubuntu-19-archived"
           ]
+        },
+        "systemverilogFormatter.commandLineArguments": {
+          "type": "string",
+          "description": "Additional command-line arguments for the formatter.",
+          "default": ""
         }
       }
     }
   },
   "scripts": {
-    "vscode:prepublish": "python3 scripts/update_dependencies.py && npm run compile",
+    "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "lint": "eslint src --ext ts",
     "watch": "tsc -watch -p ./",

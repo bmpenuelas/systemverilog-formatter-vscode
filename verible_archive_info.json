@@ -1,0 +1,14 @@
+{
+  "archive_subdirs": [
+    "CentOS-6-archived",
+    "CentOS-8-archived",
+    "Ubuntu-14-archived",
+    "Ubuntu-19-archived"
+  ],
+  "archive_binaries": {
+    "CentOS-6-archived": "archived/CentOS-6.10-Final-x86_64/verible-v0.0-520-g650c6cc/bin/verible-verilog-format",
+    "CentOS-8-archived": "archived/CentOS-8.2.2004-Core-x86_64/verible-v0.0-520-g650c6cc/bin/verible-verilog-format",
+    "Ubuntu-14-archived": "archived/Ubuntu-14.04-trusty-x86_64/verible-v0.0-520-g650c6cc/bin/verible-verilog-format",
+    "Ubuntu-19-archived": "archived/Ubuntu-19.10-eoan-x86_64/verible-v0.0-520-g650c6cc/bin/verible-verilog-format"
+  }
+}

@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { readFileSync } from "fs";
 import { join, dirname } from "path";
 import * as child from "child_process";
+import { platform, version } from "os";
 
 // Constants
 const extensionName = "systemverilog-formatter-vscode";
@@ -18,23 +19,30 @@ const extensionCfg = vscode.workspace.getConfiguration(
 const veribleReleaseInfo = JSON.parse(
   readFileSync(verible_release_info_path).toString()
 );
-const usedVeribleBuild = (() => {
-  if (extensionCfg.veribleBuild == "") return "";
-  if (extensionCfg.veribleBuild == "none") return "";
-  for (const build in veribleReleaseInfo["release_subdirs"]) {
-    let buildStr = veribleReleaseInfo["release_subdirs"][build];
-    if (buildStr.startsWith(extensionCfg.veribleBuild)) return buildStr;
+const veribleBinPath = (() => {
+  let cfgVeribleBuild = extensionCfg.veribleBuild;
+  if (cfgVeribleBuild === "none") {
+    return "";
+  }
+  if (cfgVeribleBuild === "") {
+    cfgVeribleBuild = platform().startsWith("win")
+      ? "win64"
+      : version().toLowerCase().includes("centos")
+      ? "CentOS"
+      : "Ubuntu";
+  }
+  for (const ii in veribleReleaseInfo["release_subdirs"]) {
+    let buildSubdir = veribleReleaseInfo["release_subdirs"][ii];
+    if (buildSubdir.startsWith(cfgVeribleBuild)) {
+      for (const release in veribleReleaseInfo["release_binaries"]) {
+        if (release.includes(buildSubdir)) {
+          return veribleReleaseInfo["release_binaries"][release];
+        }
+      }
+    }
   }
 })();
-const veribleBinPath = usedVeribleBuild
-  ? join(
-      extensionPath,
-      "verible_release",
-      usedVeribleBuild,
-      "verible-" + veribleReleaseInfo["tag"],
-      "bin"
-    )
-  : "";
+const additionalCommandLineArguments = extensionCfg.commandLineArguments;
 
 // Get range of document
 const textRange = (document: vscode.TextDocument) =>
@@ -51,16 +59,20 @@ const format = (
   inPlace: boolean = false
 ) => {
   let params = [];
-  if (lines.length > 0)
+  if (lines.length > 0) {
     params.push(
       "--lines " +
         lines.map((range) => range.map((line) => line + 1).join("-")).join(",")
     );
-  if (inPlace) params.push("--inplace");
+  }
+  if (inPlace) {
+    params.push("--inplace");
+  }
   let runLocation = dirname(filePath);
   let command = [
-    join(veribleBinPath, "verible-verilog-format"),
+    veribleBinPath,
     ...params,
+    additionalCommandLineArguments,
     "-",
   ].join(" ");
   let output = child.execSync(command, {
