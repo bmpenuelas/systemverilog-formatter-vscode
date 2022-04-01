@@ -2,7 +2,7 @@
 
 ### Beautify SystemVerilog code in VSCode through [google/Verible](https://github.com/google/verible)
 
-**NEW** Now working in Windows, Ubuntu, CentOS and more!
+**NEW:** Now working in Windows, Ubuntu, CentOS and more!
 
 **WARNING!** This extension will **only** work out of the box for the supported pre-built **OSs** detailed below. For other OSs you might need to build Verible yourself and have it in your PATH.
 

@@ -36,7 +36,10 @@ const veribleBinPath = (() => {
     if (buildSubdir.startsWith(cfgVeribleBuild)) {
       for (const release in veribleReleaseInfo["release_binaries"]) {
         if (release.includes(buildSubdir)) {
-          return veribleReleaseInfo["release_binaries"][release];
+          return join(
+            extensionPath,
+            veribleReleaseInfo["release_binaries"][release]
+          );
         }
       }
     }
