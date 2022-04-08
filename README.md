@@ -1,6 +1,6 @@
-# SystemVerilog Formatter for VSCode
+# SystemVerilog and Verilog Formatter for VSCode
 
-### Beautify SystemVerilog code in VSCode through [google/Verible](https://github.com/google/verible)
+### Beautify SystemVerilog and Verilog code in VSCode through [google/Verible](https://github.com/google/verible)
 
 **NEW:** Now working in Windows, Ubuntu, CentOS and more!
 
