@@ -87,21 +87,19 @@ const format = (
 
 // Extension is activated
 export function activate(context: vscode.ExtensionContext) {
-  vscode.languages.registerDocumentRangeFormattingEditProvider(
-    "systemverilog",
+  vscode.languages.registerDocumentFormattingEditProvider(
+     ["verilog", "systemverilog"],
     {
       provideDocumentRangeFormattingEdits(
         document: vscode.TextDocument,
-        range: vscode.Range
       ): vscode.TextEdit[] {
         let filePath = document.uri.fsPath;
         let currentText = document.getText();
-        let lines = [[range.start.line, range.end.line]];
 
         return [
           vscode.TextEdit.replace(
             textRange(document),
-            format(filePath, currentText, lines)
+            format(filePath, currentText)
           ),
         ];
       },
