@@ -88,10 +88,10 @@ const format = (
 // Extension is activated
 export function activate(context: vscode.ExtensionContext) {
   vscode.languages.registerDocumentFormattingEditProvider(
-     ["verilog", "systemverilog"],
+    ["verilog", "systemverilog"],
     {
-      provideDocumentRangeFormattingEdits(
-        document: vscode.TextDocument,
+      provideDocumentFormattingEdits(
+        document: vscode.TextDocument
       ): vscode.TextEdit[] {
         let filePath = document.uri.fsPath;
         let currentText = document.getText();
