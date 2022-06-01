@@ -18,7 +18,9 @@
   ],
   "activationEvents": [
     "onLanguage:systemverilog",
-    "onCommand:systemverilog-formatter-vscode.format"
+    "onLanguage:verilog",
+    "onCommand:systemverilog-formatter-vscode.formatDocument",
+    "onCommand:systemverilog-formatter-vscode.formatSelection"
   ],
   "main": "./out/extension.js",
   "contributes": {
