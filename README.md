@@ -8,6 +8,12 @@
 
 ![](media/demo_0.gif)
 
+### Installation
+
+To install _SystemVerilog and Verilog Formatter_, search it in the Extensions tab inside VSCode, or [install it from the Marketplace](https://marketplace.visualstudio.com/items?itemName=bmpenuelas.systemverilog-formatter-vscode).
+
+Alternatively, you can also clone this repository and build the sources yourself, then install it from VSIX.
+
 ### OS Support
 
 As of now, Verible binaries are **released for a limited number of OSs and versions**. If your OS or distro is not listed below, you can give it a try with the one that is most similar to yours, some users have been able to use it in different distros as well. Otherwise, you can build Verible for your OS and use that selecting build "none".

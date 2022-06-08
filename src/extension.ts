@@ -22,7 +22,7 @@ const veribleReleaseInfo = JSON.parse(
 const veribleBinPath = (() => {
   let cfgVeribleBuild = extensionCfg.veribleBuild;
   if (cfgVeribleBuild === "none") {
-    return "";
+    return "verible-verilog-format";
   }
   if (cfgVeribleBuild === "") {
     cfgVeribleBuild = platform().startsWith("win")
