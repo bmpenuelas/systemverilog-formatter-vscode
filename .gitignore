@@ -4,4 +4,5 @@ Thumbs.db
 node_modules/
 out/
 *.vsix
-verible_release
+verible_release/
+archived/

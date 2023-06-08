@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { readFileSync } from "fs";
 import { join, dirname } from "path";
-import * as child from "child_process";
+import { execSync, ExecSyncOptions } from "child_process";
 import { platform, version } from "os";
 
 // Constants
@@ -19,6 +19,26 @@ const extensionCfg = vscode.workspace.getConfiguration(
 const veribleReleaseInfo = JSON.parse(
   readFileSync(verible_release_info_path).toString()
 );
+function getUserPreferredTerminalExecutable(): string | undefined {
+  // Get the current operating system
+  const isWindows = process.platform === "win32";
+  const isMacOS = process.platform === "darwin";
+  const isLinux = process.platform === "linux";
+
+  // Get the integrated terminal configuration
+  const config = vscode.workspace.getConfiguration("terminal.integrated");
+
+  // Get the configured terminal executable based on the operating system
+  let terminalExecutable: string | undefined;
+  if (isWindows) {
+    terminalExecutable = config.get<string>("shell.windows");
+  } else if (isMacOS) {
+    terminalExecutable = config.get<string>("shell.osx");
+  } else if (isLinux) {
+    terminalExecutable = config.get<string>("shell.linux");
+  }
+  return terminalExecutable;
+}
 const veribleBinPath = (() => {
   let cfgVeribleBuild = extensionCfg.veribleBuild;
   if (cfgVeribleBuild === "none") {
@@ -83,10 +103,16 @@ const format = (
     additionalCommandLineArguments,
     "-",
   ].join(" ");
-  let output = child.execSync(command, {
+  const execOptions: ExecSyncOptions = {
+    encoding: "utf-8",
     cwd: runLocation,
     input: documentText,
-  });
+  };
+  const terminalExecutable = getUserPreferredTerminalExecutable();
+  if (terminalExecutable) {
+    execOptions["shell"] = terminalExecutable;
+  }
+  let output = execSync(command, execOptions);
   return output.toString();
 };
 
@@ -115,7 +141,7 @@ export function activate(context: vscode.ExtensionContext) {
   let formatDocument = vscode.commands.registerCommand(
     extensionName + ".formatDocument",
     () => {
-      var editor = vscode.window.activeTextEditor;
+      const editor = vscode.window.activeTextEditor;
       if (editor) {
         let document = editor.document as vscode.TextDocument;
         let filePath = document.uri.fsPath as string;
@@ -136,12 +162,12 @@ export function activate(context: vscode.ExtensionContext) {
   let formatSelection = vscode.commands.registerCommand(
     extensionName + ".formatSelection",
     () => {
-      var editor = vscode.window.activeTextEditor;
+      const editor = vscode.window.activeTextEditor;
       if (editor) {
         let document = editor.document as vscode.TextDocument;
         let currentText = document.getText();
         let filePath = document.uri.fsPath as string;
-        let selection = editor.selection;
+        let { selection } = editor;
         if (selection && !selection.isEmpty) {
           let lines = [[selection.start.line, selection.end.line]];
           editor.edit((editBuilder) =>
