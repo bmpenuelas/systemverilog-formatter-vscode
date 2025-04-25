@@ -14,8 +14,8 @@ RELEASE_DIR = 'verible_release'
 RELEASE_INFO_FILE = 'verible_release_info.json'
 PACKAGE_JSON_PATH = 'package.json'
 VERIBLE_ARCHIVE_JSON_PATH = 'verible_archive_info.json'
-GET_RELEASES_CMD = 'curl -s https://api.github.com/repos/chipsalliance/verible/releases/latest | jq -r ".assets[].name"'
-GET_TAG_CMD = 'curl -s https://api.github.com/repos/chipsalliance/verible/releases/latest | grep -oP \'"tag_name": "\K(.*)(?=")\''
+GET_RELEASES_CMD = 'curl -k -s https://api.github.com/repos/chipsalliance/verible/releases/latest | jq -r ".assets[].name"'
+GET_TAG_CMD = 'curl -k -s https://api.github.com/repos/chipsalliance/verible/releases/latest | grep -oP \'"tag_name": "\K(.*)(?=")\''
 
 
 def remove_extensions(file_list):
@@ -29,6 +29,9 @@ def remove_extensions(file_list):
 releases = subprocess.check_output(
     GET_RELEASES_CMD, shell=True).decode('utf8').strip().splitlines()
 tag = subprocess.check_output(GET_TAG_CMD, shell=True).decode('utf8').strip()
+# Remove the sources-only
+releases = [element for element in releases if element !=
+            f"verible-{tag}.tar.gz"]
 
 if os.path.exists(RELEASE_DIR):
     shutil.rmtree(RELEASE_DIR)
@@ -81,7 +84,10 @@ for index, item in enumerate(releases):
     # (assume all Linux releases are compressed using .tar.gz)
     print('item', item)
     if '.tar' in item:
-        shutil.rmtree(os.path.join(containing_dir, 'share', 'man'))
+        try:
+            shutil.rmtree(os.path.join(containing_dir, 'share', 'man'))
+        except FileNotFoundError:
+            pass
         release_info['release_binaries'][item] = str(pathlib.PurePosixPath(os.path.join(
             output_bin_dir, 'verible-verilog-format'))).replace('\\', '/')
     # (assume all the non-Linux releases have the same flat structure,

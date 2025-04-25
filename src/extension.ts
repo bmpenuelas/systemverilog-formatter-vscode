@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { readFileSync } from "fs";
 import { join, dirname } from "path";
 import { execSync, ExecSyncOptions } from "child_process";
-import { platform, version } from "os";
+import { platform, arch } from "os";
 
 // Constants
 const extensionName = "systemverilog-formatter-vscode";
@@ -13,9 +13,18 @@ const verible_release_info_path = join(
   extensionPath,
   "verible_release_info.json"
 );
-const extensionCfg = vscode.workspace.getConfiguration(
-  "systemverilogFormatter"
-);
+
+const getExtensionCfg = (param: string) => {
+  const extensionCfg = vscode.workspace.getConfiguration(
+    "systemverilogFormatter"
+  );
+  if (!param) {
+    return extensionCfg;
+  } else {
+    return extensionCfg[param];
+  }
+};
+
 const veribleReleaseInfo = JSON.parse(
   readFileSync(verible_release_info_path).toString()
 );
@@ -39,20 +48,31 @@ function getUserPreferredTerminalExecutable(): string | undefined {
   }
   return terminalExecutable;
 }
-const veribleBinPath = (() => {
-  let cfgVeribleBuild = extensionCfg.veribleBuild;
+const getVeribleBinPath = () => {
+  let cfgVeribleBuild = getExtensionCfg("veribleBuild");
   if (cfgVeribleBuild === "none") {
     return "verible-verilog-format";
   }
+
+  // Auto-detect platform if not manually specified
   if (cfgVeribleBuild === "") {
-    cfgVeribleBuild = platform().startsWith("win")
-      ? "win64"
-      : version().toLowerCase().includes("centos")
-      ? "CentOS"
-      : "Ubuntu";
+    const osPlatform = platform().toLowerCase();
+    const osArch = arch();
+
+    if (osPlatform.startsWith("win")) {
+      cfgVeribleBuild = "win64";
+    } else if (osPlatform === "darwin") {
+      cfgVeribleBuild = "macOS";
+    } else if (osPlatform === "linux") {
+      if (osArch === "arm64") {
+        cfgVeribleBuild = "linux-static-arm64";
+      } else {
+        cfgVeribleBuild = "linux-static-x86_64";
+      }
+    }
   }
-  for (const ii in veribleReleaseInfo["release_subdirs"]) {
-    let buildSubdir = veribleReleaseInfo["release_subdirs"][ii];
+
+  for (const buildSubdir of veribleReleaseInfo["release_subdirs"]) {
     if (buildSubdir.startsWith(cfgVeribleBuild)) {
       for (const release in veribleReleaseInfo["release_binaries"]) {
         if (release.includes(buildSubdir)) {
@@ -69,8 +89,10 @@ const veribleBinPath = (() => {
       }
     }
   }
-})();
-const additionalCommandLineArguments = extensionCfg.commandLineArguments;
+
+  // Fallback to find in PATH if no match found
+  return "verible-verilog-format";
+};
 
 // Get range of document
 const textRange = (document: vscode.TextDocument) =>
@@ -98,9 +120,9 @@ const format = (
   }
   let runLocation = dirname(filePath);
   let command = [
-    veribleBinPath,
+    getVeribleBinPath(),
     ...params,
-    additionalCommandLineArguments,
+    getExtensionCfg("commandLineArguments"),
     "-",
   ].join(" ");
   const execOptions: ExecSyncOptions = {
@@ -110,10 +132,23 @@ const format = (
   };
   const terminalExecutable = getUserPreferredTerminalExecutable();
   if (terminalExecutable) {
-    execOptions["shell"] = terminalExecutable;
+    execOptions.shell = terminalExecutable;
   }
-  let output = execSync(command, execOptions);
-  return output.toString();
+
+  try {
+    const output = execSync(command, execOptions);
+    return output.toString();
+  } catch (err) {
+    vscode.window.showInformationMessage(
+      "Failed to run the formatter, please check and update the setting systemverilogFormatter.veribleBuild"
+    );
+    console.error("Formatting failed:", (err as any).message || err);
+    throw new Error(
+      `Failed to format the file. Please check and update the setting systemverilogFormatter.veribleBuild.\n\nError details:\n${
+        (err as any).message || err
+      }`
+    );
+  }
 };
 
 // Extension is activated
