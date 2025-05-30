@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { readFileSync } from "fs";
 import { join, dirname } from "path";
-import { execSync, ExecSyncOptions } from "child_process";
+import { spawnSync, SpawnSyncOptionsWithStringEncoding } from "child_process";
 import { platform, arch } from "os";
 
 // Constants
@@ -94,6 +94,26 @@ const getVeribleBinPath = () => {
   return "verible-verilog-format";
 };
 
+// Channel to show logs
+const outputChannel = vscode.window.createOutputChannel(
+  "SystemVerilog Formatter"
+);
+const logMessage = (message: string) => {
+  outputChannel.appendLine(message);
+  outputChannel.show(true);
+};
+const getCurrentDateTimeString = () => {
+  const now = new Date();
+  const pad = (num: number) => num.toString().padStart(2, "0");
+  const year = now.getFullYear();
+  const month = pad(now.getMonth() + 1);
+  const day = pad(now.getDate());
+  const hours = pad(now.getHours());
+  const minutes = pad(now.getMinutes());
+  const seconds = pad(now.getSeconds());
+  return `${year} ${month} ${day} - ${hours}:${minutes}:${seconds}`;
+};
+
 // Get range of document
 const textRange = (document: vscode.TextDocument) =>
   new vscode.Range(
@@ -125,19 +145,37 @@ const format = (
     getExtensionCfg("commandLineArguments"),
     "-",
   ].join(" ");
-  const execOptions: ExecSyncOptions = {
+  const documentTextNormalized =
+    vscode.window.activeTextEditor?.document.eol === vscode.EndOfLine.CRLF
+      ? documentText.replace(/\n/g, "\r\n")
+      : documentText;
+  const spawnOptions: SpawnSyncOptionsWithStringEncoding = {
     encoding: "utf-8",
     cwd: runLocation,
-    input: documentText,
+    input: documentTextNormalized,
+    shell: true,
   };
   const terminalExecutable = getUserPreferredTerminalExecutable();
   if (terminalExecutable) {
-    execOptions.shell = terminalExecutable;
+    spawnOptions.shell = terminalExecutable;
   }
 
   try {
-    const output = execSync(command, execOptions);
-    return output.toString();
+    const result = spawnSync(command, spawnOptions);
+    if (result.stderr) {
+      vscode.window.showErrorMessage(
+        "Syntax error: " + result.stderr.toString().replace(/<stdin>:/g, "")
+      );
+      logMessage(
+        getCurrentDateTimeString() + "   ---------------------------------"
+      );
+      logMessage("Syntax error:");
+      logMessage(result.stderr.toString().replace(/<stdin>:/g, ""));
+      logMessage("---------------------------------------------------------\n");
+      return documentText;
+    } else {
+      return result.stdout;
+    }
   } catch (err) {
     vscode.window.showInformationMessage(
       "Failed to run the formatter, please check and update the setting systemverilogFormatter.veribleBuild"
@@ -181,7 +219,6 @@ export function activate(context: vscode.ExtensionContext) {
         let document = editor.document as vscode.TextDocument;
         let filePath = document.uri.fsPath as string;
         let currentText = document.getText();
-        format(filePath, currentText);
         editor.edit((editBuilder) =>
           editBuilder.replace(
             textRange(document),
