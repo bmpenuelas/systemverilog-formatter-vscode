@@ -1,8 +1,9 @@
 import * as vscode from "vscode";
-import { readFileSync } from "fs";
+import { writeFileSync, readFileSync, unlinkSync, mkdtempSync } from "fs";
 import { join, dirname } from "path";
 import { spawnSync, SpawnSyncOptionsWithStringEncoding } from "child_process";
-import { platform, arch } from "os";
+import { platform, arch, tmpdir } from "os";
+import { randomUUID } from "crypto";
 
 // Constants
 const extensionName = "systemverilog-formatter-vscode";
@@ -125,36 +126,34 @@ const textRange = (document: vscode.TextDocument) =>
 const format = (
   filePath: string,
   documentText: string,
-  lines: Array<Array<number>> = [],
-  inPlace: boolean = false
-) => {
-  let params = [];
+  lines: Array<Array<number>> = []
+): string => {
+  const tmpFolder = mkdtempSync(join(tmpdir(), "verible-"));
+  const tmpFilePath = join(tmpFolder, `tmp-${randomUUID()}.sv`);
+
+  writeFileSync(tmpFilePath, documentText, { encoding: "utf-8" });
+
+  let params = [`--inplace`];
   if (lines.length > 0) {
     params.push(
       "--lines " +
         lines.map((range) => range.map((line) => line + 1).join("-")).join(",")
     );
   }
-  if (inPlace) {
-    params.push("--inplace");
-  }
   let runLocation = dirname(filePath);
   let command = [
     getVeribleBinPath(),
     ...params,
     getExtensionCfg("commandLineArguments"),
-    "-",
+    `"${tmpFilePath}"`,
   ].join(" ");
-  const documentTextNormalized =
-    vscode.window.activeTextEditor?.document.eol === vscode.EndOfLine.CRLF
-      ? documentText.replace(/\n/g, "\r\n")
-      : documentText;
+
   const spawnOptions: SpawnSyncOptionsWithStringEncoding = {
     encoding: "utf-8",
     cwd: runLocation,
-    input: documentTextNormalized,
     shell: true,
   };
+
   const terminalExecutable = getUserPreferredTerminalExecutable();
   if (terminalExecutable) {
     spawnOptions.shell = terminalExecutable;
@@ -162,6 +161,7 @@ const format = (
 
   try {
     const result = spawnSync(command, spawnOptions);
+
     if (result.stderr) {
       vscode.window.showErrorMessage(
         "Syntax error: " + result.stderr.toString().replace(/<stdin>:/g, "")
@@ -174,7 +174,9 @@ const format = (
       logMessage("---------------------------------------------------------\n");
       return documentText;
     } else {
-      return result.stdout;
+      const formatted = readFileSync(tmpFilePath, { encoding: "utf-8" });
+      unlinkSync(tmpFilePath); // Clean up
+      return formatted;
     }
   } catch (err) {
     vscode.window.showInformationMessage(
