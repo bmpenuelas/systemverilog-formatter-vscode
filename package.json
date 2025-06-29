@@ -3,7 +3,7 @@
   "displayName": "SystemVerilog and Verilog Formatter",
   "description": "Beautify SystemVerilog and Verilog code in VSCode through Verible",
   "icon": "img/logo.png",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "publisher": "bmpenuelas",
   "license": "MIT",
   "repository": {
